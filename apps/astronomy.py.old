@@ -1,0 +1,215 @@
+# some random useful functions
+
+# Module Calculates the periodogram of lightcurve. Take arrays containing the time and magnitude
+# and returns arrays containing amplitude and frequency.
+import string
+from numpy  import *
+from numpy.linalg import *	
+from os import *
+from time import time
+
+
+
+
+
+
+
+def smooth(x,y,n):
+	# smooths curve by taking average of every n points
+	xnew = [None]*0
+	ynew = [None]*0
+	end = len(x)
+	k = 0
+	xave = 0.0
+	yave = 0.0
+	
+	for i in range(end):
+		if k == n:
+			xnew.append(xave/n)
+			ynew.append(yave/n)
+			xave = 0.0
+			yave = 0.0
+			k = 0
+		
+		elif i == end:
+			xnew.append(xave/(k+1))
+			ynew.append(yave/(k+1))
+			
+		else:
+			xave += x[i]
+			yave += y[i]
+			k += 1
+	
+	
+	return xnew,ynew
+		
+# transforms a list of numbers from magnitudes to flux units
+def magtoflux(x):
+	flux = zeros(len(x),'d')
+	flux[:] = 10.0**(x[:]/(-2.5))
+	
+	return flux
+
+# transforms a list of numbers from flux units to magnitudes
+def fluxtomag(x):
+	mag = zeros(len(x),'d')
+	mag = -2.5*log10(x[:])
+	
+	return mag
+
+
+def phase(mytime,mag):
+# program creates a phased lightcurve from data at a frequency entered by user
+	period = 1.0 / atof(raw_input('Enter the period the data must be phased at (cycles/day) :'))
+	
+	mytime2 = [0.0]*len(mytime)
+	
+	for i in range(len(mytime)):
+		mytime2[i] = mytime[i] - mytime[0]
+	
+	# Calculate phase
+	for i in range(len(mytime)):
+		mytime2[i] = mytime2[i] / period
+		mytime2[i] = mytime2[i] - int(mytime2[i])
+
+	
+	return mytime2,mag
+
+
+
+def periodogram(date,magnitude,start,end,step):
+	''' 
+	Function that calculates the Lomb-Scargle periodogram of a time series
+	This is analogous to the Discrete Fourier Transform but works for irregularly sampled data
+	like those found in most astronomical observations of variable stars
+			
+	Input:
+	------------------------------------------------------------------------------------------ 	
+	date		: list or array containing the time component
+	magnitude	: is list or array containing the measured value
+	start		: frequency at which to start the calculation (cycles / time)
+	end		: frequency at which to stop calculation
+	step		: interval between frequencies, this should be less than 1 / T where
+			  T is the baseline length
+			
+	Output:
+	------------------------------------------------------------------------------------------	
+	freq		: a numpy array containing the frequencies where the periodogram was calculated
+	amp		: a numpy array containing the value of the periodogram  
+	
+	Example:
+	------------------------------------------------------------------------------------------
+	from pylab import *
+	t = arange(0.0,0.25,0.001)  # time values
+	f = 0.5*sin(2*pi*(250*t))   # signal with amplitude 0.5 and frequency 250 Hz (if time in seconds)
+	x,y = periodogram(t,f,0,500,1)
+	plot(x,y) # This should show peak with amplitude 0.5 at 250.0
+	show()
+	
+	'''
+	# make sure these are numpy arrays
+	date = array(date)
+	magnitude = array(magnitude)
+	
+	length = int((end - start) / step)
+	
+	t = zeros(len(date),'d')
+	m = zeros(len(date),'d')
+	ave = sum(magnitude)/len(magnitude)
+	
+	t = date.copy()
+	m = magnitude.copy() - ave
+	
+	i = len(t)	
+		
+	
+	# This is the inside loop of the calculation
+	def ffseq(freq):
+    		result = []
+    		for x in freq:
+			temp = ((4*(sum(m*sin(2*pi*x*t)) / i)**2 + 4*(sum(m*cos(2*pi*x*t)) / i)**2))**0.5
+        		result.append(temp)
+    		return result
+	
+	# create array containing all frequencies to be considered
+	j = arange(start,end,step,'d')
+	
+	A = ffseq(j)
+	
+	return array(j) , array(A)
+
+
+def read_file_interactive(filename):
+	'''#read two columns from text file interactively, '''
+	
+	
+	
+	time = [None]*0
+	mag = [None]*0
+	
+	myfile = file(filename,'r')
+	
+	print ""
+	print filename
+	print ""
+	system('less '+ filename)
+	
+	while True:
+		filetype = raw_input("Is this file  [1] Comma  or [2] Tab Delimited ?  ")
+		if filetype == '1' or filetype =='2':
+			break
+		
+	while True:
+		columns = string.split(raw_input("Use which columns?  : "))
+		if len(columns) == 2:
+			col1 = string.atoi(columns[0]) - 1 
+			col2 = string.atoi(columns[1]) - 1
+			break
+	
+	while True:
+		mystring = myfile.readline()
+		if len(mystring) < 1:
+			break
+		elif ( mystring[0] == '#' ): 
+			continue
+		else:
+			if filetype == '1':
+				temp = string.split(mystring,sep=',')
+			elif filetype == '2':
+				temp = string.split(mystring)
+				
+			mag.append(string.atof(temp[col2]))
+			time.append(string.atof(temp[col1]))
+
+
+	return array(time),array(mag)
+
+
+def read_file(filename,col1,col2,filetype='2'):
+	'''#read two columns from text file, col1 and col2 specifies the two columns. 
+	Filetype = '1' for comma delimited files and '2' for tab delimited files.'''
+	
+	
+	time = [None]*0
+	mag = [None]*0
+	
+	myfile = file(filename,'r')
+	
+
+	while True:
+		mystring = myfile.readline()
+		if len(mystring) < 1:
+			break
+		elif ( mystring[0] == '#' ): 
+			continue
+		else:
+			if filetype == '1':
+				temp = string.split(mystring,sep=',')
+			elif filetype == '2':
+				temp = string.split(mystring)
+				
+			mag.append(string.atof(temp[col2-1]))
+			time.append(string.atof(temp[col1-1]))
+
+
+	return array(time),array(mag)

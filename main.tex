@@ -1,0 +1,163 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{array}
+
+\usepackage{lscape}
+% Title Page
+% \title{Time-Series Photometry and Spectroscopy of the Cataclysmic Variable EC21178-5417:\\Exploring new avenues with the Southern African Large Telescope}
+% 
+% 
+% \author{\\\\\\\\\\\\Ewald Zietsman\\\\\\\\}
+% \date{2007}
+
+% for ApJ style citations.  
+\bibliographystyle{apj}
+
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+{
+\LARGE
+\vskip 0.5cm
+
+\vskip 0.5cm
+\ \ \\
+\ \ \\
+{\bf Time-Series Photometry and Spectroscopy of the Cataclysmic Variable EC21178-5417:\\Exploring new avenues with the Southern African Large Telescope}
+\ \  \\
+\ \  \\
+\ \  \\
+\large
+
+E. Zietsman\\
+
+\ \  \\
+\ \  \\
+
+\rm 
+\normalsize
+
+Department of Astronomy\\
+University of Cape Town\\
+South Africa
+\ \  \\
+\ \  \\
+\ \  \\
+\ \  \\
+\ \  \\
+\ \  \\
+
+
+{\it A dissertation submitted in partial fulfillment of the requirements for the degree M.Sc. in the Department of Astronomy, as part of the\\ 
+National Astrophysics and Space Science Programme}\\
+
+\rm
+ UNIVERSITY OF CAPE TOWN \\
+
+\ \  \\
+
+
+\medskip
+June 2008}
+
+\vspace*{3cm}
+Supervisor: {\it Dr. P. A. Woudt}
+\end{center}
+
+%\newpage
+
+\end{titlepage}
+
+
+% \maketitle
+
+
+% for making wide graphics
+\newenvironment{narrow}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}}%
+\item[]}{\end{list}}
+
+
+% Different font in captions
+\newcommand{\captionfonts}{\footnotesize}
+
+\makeatletter  % Allow the use of @ in command names
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{{\captionfonts #1: #2}}%
+  \ifdim \wd\@tempboxa >\hsize
+    {\captionfonts #1: #2\par}
+  \else
+    \hbox to\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother   % Cancel the effect of \makeatletter
+
+
+
+\pagenumbering{roman}
+
+% \frontmatter
+\tableofcontents
+\listoffigures
+\listoftables
+% \pagebreak
+
+
+
+\begin{abstract}
+
+Simultaneous time-series photometric and spectroscopic data for the nova-like cataclysmic variable star were obtained in August 2006. The behaviour of rapid oscillations detected in the photometric data are studied and compared to models suggested by the literature. In particular, the behaviour of Dwarf Nova Oscillations (DNOs) and Longer Period DNOs (lpDNOs) are studied using the August 2006 and archive observations. In addition, simultaneous high-speed spectroscopic observations were obtained using the Southern African Large Telescope (SALT) during its performance verification phase. These observations were analysed with the goal of finding wavelength dependent behaviour in the rapid oscillations in order to identify the region(s) in which these oscillations originate in the system. A systematic phase change is observed in the DNOs during eclipse and a possible explanation is given.
+
+\end{abstract}
+
+
+
+
+% \mainmatter
+
+\pagenumbering{arabic}
+
+\setlength{\parindent}{25pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
+% stop figures alone on a page
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+
+
+
+
+\include{introduction}
+\include{photometry}
+\include{spectroscopy}
+%\include{analysis}
+\include{discussion}
+
+
+%\backmatter
+\appendix
+% \include{appendixB}
+\include{appendixA}
+
+
+
+\nocite{warnerbible}
+\bibliography{bibliography}
+
+
+
+\end{document}          

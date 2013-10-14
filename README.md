@@ -1,4 +1,4 @@
 msc-thesis
 ==========
 
-Final handin of my MSc thesis
+Possibly the final version of my MSc thesis folder.
